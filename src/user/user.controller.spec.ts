@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { CreateUser } from './dto/create-user/create-user.interface';
+import { CreateUserDto } from './dto/create-user/create-user.interface';
 import { UserController } from './user.controller';
 import { UserService } from './user.service';
 
@@ -30,7 +30,7 @@ describe('UserController', () => {
   });
 
   it('should create a user with a name, email, and password', async () => {
-    const createUserDto: CreateUser = {
+    const createUserDto: CreateUserDto = {
       name: 'John Doe',
       email: 'test@google.com',
       password: 'password',

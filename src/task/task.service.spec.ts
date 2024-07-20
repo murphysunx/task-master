@@ -1,12 +1,12 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { PrismaClient } from '@prisma/client';
 import { DeepMockProxy, mockDeep } from 'jest-mock-extended';
-import { PrismaService } from '../prisma.service';
-import { User } from '../user/domain/user/user';
+import { PrismaService } from 'nestjs-prisma';
+import { User } from '../user/entity/user/user';
 import { UserNotFound } from '../user/exceptions/user-not-found/user-not-found';
 import { UserService } from '../user/user.service';
-import { Task } from './domain/task';
-import { CreateTask } from './dto/create-task/create-task.interface';
+import { CreateTaskDto } from './dto/create-task/create-task.interface';
+import { Task } from './entity/task';
 import { TaskService } from './task.service';
 
 describe('TaskService', () => {
@@ -37,17 +37,17 @@ describe('TaskService', () => {
   });
 
   it('should create a task with a title and a userId', async () => {
-    const createTaskDto: CreateTask = {
+    const createTaskDto: CreateTaskDto = {
       title: 'Task 1',
       userId: '1',
     };
     // mock the userService.findById method
-    const expectedUser: User = new User(
-      '1',
-      'John Doe',
-      '2022-11-16',
-      '2022-11-16',
-    );
+    const expectedUser: User = new User({
+      id: BigInt(1),
+      name: 'John Doe',
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    });
     userService.findById.mockReturnValueOnce(Promise.resolve(expectedUser));
     // mock created task
     const expectedTask: Awaited<ReturnType<typeof prisma.task.create>> = {
@@ -72,19 +72,17 @@ describe('TaskService', () => {
         description: void 0,
       } as Parameters<typeof prisma.task.create>[0]['data'],
     });
-    expect(createdTask.id).toBe(expectedTask.id.toString());
-    expect(createdTask.getTitle()).toBe(expectedTask.title);
-    expect(createdTask.getCreatedBy()).toBe(expectedUser.id);
-    expect(createdTask.getDescription()).toBe(
-      expectedTask.description || void 0,
-    );
-    expect(createdTask.isCompleted()).toBe(expectedTask.completed);
-    expect(createdTask.getCreatedAt()).toBe(expectedTask.createdAt.toString());
-    expect(createdTask.getUpdatedAt()).toBe(expectedTask.updatedAt.toString());
+    expect(createdTask.id.toString()).toBe(expectedTask.id.toString());
+    expect(createdTask.title).toBe(expectedTask.title);
+    expect(createdTask.userId).toBe(expectedUser.id);
+    expect(createdTask.description).toBe(expectedTask.description);
+    expect(createdTask.completed).toBe(expectedTask.completed);
+    expect(createdTask.createdAt).toEqual(expectedTask.createdAt);
+    expect(createdTask.updatedAt).toEqual(expectedTask.updatedAt);
   });
 
   it('should throw UserNotFoundException if the user does not exist', async () => {
-    const createTaskDto: CreateTask = {
+    const createTaskDto: CreateTaskDto = {
       title: 'Task 1',
       userId: '1',
     };

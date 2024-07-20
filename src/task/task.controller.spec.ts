@@ -1,8 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { DeepMockProxy, mockDeep } from 'jest-mock-extended';
 import { UserNotFound } from 'src/user/exceptions/user-not-found/user-not-found';
-import { Task } from './domain/task';
-import { CreateTask } from './dto/create-task/create-task.interface';
+import { Task } from './entity/task';
+import { CreateTaskDto } from './dto/create-task/create-task.interface';
 import { TaskController } from './task.controller';
 import { TaskService } from './task.service';
 
@@ -29,19 +29,20 @@ describe('TaskController', () => {
   });
 
   it('should create task with CreateTaskDto', async () => {
-    const createTaskDto: CreateTask = {
+    const createTaskDto: CreateTaskDto = {
       title: 'Task 1',
       description: 'Description 1',
       userId: '1',
     };
-    const expectedTask: Task = new Task(
-      '1',
-      createTaskDto.title,
-      '2022-11-16',
-      '2022-11-16',
-      createTaskDto.userId,
-    );
-    expectedTask.setDescription(createTaskDto.description!);
+    const expectedTask: Task = new Task({
+      id: BigInt(1),
+      title: createTaskDto.title,
+      userId: BigInt(createTaskDto.userId),
+      completed: false,
+      description: createTaskDto.description,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    });
     taskService.createTask.mockResolvedValue(expectedTask);
     const task = await controller.create(createTaskDto);
     expect(taskService.createTask).toHaveBeenCalledWith(createTaskDto);
@@ -49,7 +50,7 @@ describe('TaskController', () => {
   });
 
   it('should throw an error if the user does not exist', async () => {
-    const createTaskDto: CreateTask = {
+    const createTaskDto: CreateTaskDto = {
       title: 'Task 1',
       description: 'Description 1',
       userId: '1',

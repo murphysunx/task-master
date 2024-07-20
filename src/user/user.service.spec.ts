@@ -1,8 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { PrismaClient } from '@prisma/client';
 import { DeepMockProxy, mockDeep } from 'jest-mock-extended';
-import { PrismaService } from 'src/prisma.service';
-import { CreateUser } from './dto/create-user/create-user.interface';
+import { PrismaService } from 'nestjs-prisma';
+import { CreateUserDto } from './dto/create-user/create-user.interface';
 import { UserService } from './user.service';
 
 describe('UserService', () => {
@@ -28,7 +28,7 @@ describe('UserService', () => {
   });
 
   it('should create a user with a name, email, and password', async () => {
-    const payload: CreateUser = {
+    const payload: CreateUserDto = {
       name: 'John Doe',
       email: 'test@google.com',
       password: 'password',
@@ -46,12 +46,12 @@ describe('UserService', () => {
     const user = await service.create(payload);
     expect(prisma.user.create).toHaveBeenCalledWith({ data: payload });
     expect(user).toBeDefined();
-    expect(user.id).toBe(createdUser.id.toString());
-    expect(user.getName()).toBe(createdUser.name);
-    expect(user.getEmail()).toBe(createdUser.email);
-    expect(user.getPassword()).toBe(createdUser.password);
-    expect(user.getCreatedAt()).toBe(createdUser.createdAt.toString());
-    expect(user.getUpdatedAt()).toBe(createdUser.updatedAt.toString());
+    expect(user.id.toString()).toBe(createdUser.id.toString());
+    expect(user.name).toBe(createdUser.name);
+    expect(user.email).toBe(createdUser.email);
+    expect(user.password).toBe(createdUser.password);
+    expect(user.createdAt).toEqual(createdUser.createdAt);
+    expect(user.updatedAt).toEqual(createdUser.updatedAt);
   });
 
   it('should get a user by id', async () => {
@@ -71,12 +71,12 @@ describe('UserService', () => {
     const foundUser = await service.findById(id.toString());
     expect(prisma.user.findUnique).toHaveBeenCalledWith({ where: { id } });
     expect(foundUser).toBeDefined();
-    expect(foundUser!.id).toBe(expectedUser.id.toString());
-    expect(foundUser!.getName()).toBe(expectedUser.name);
-    expect(foundUser!.getEmail()).toBe(expectedUser.email);
-    expect(foundUser!.getPassword()).toBe(expectedUser.password);
-    expect(foundUser!.getCreatedAt()).toBe(expectedUser.createdAt.toString());
-    expect(foundUser!.getUpdatedAt()).toBe(expectedUser.updatedAt.toString());
+    expect(foundUser!.id.toString()).toBe(expectedUser.id.toString());
+    expect(foundUser!.name).toBe(expectedUser.name);
+    expect(foundUser!.email).toBe(expectedUser.email);
+    expect(foundUser!.password).toBe(expectedUser.password);
+    expect(foundUser!.createdAt).toEqual(expectedUser.createdAt);
+    expect(foundUser!.updatedAt).toEqual(expectedUser.updatedAt);
   });
 
   it('should return null if user is not found', async () => {

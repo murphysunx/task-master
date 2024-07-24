@@ -5,9 +5,10 @@ import { PrismaService } from 'nestjs-prisma';
 import { User } from '../user/entity/user/user';
 import { UserNotFound } from '../user/exceptions/user-not-found/user-not-found';
 import { UserService } from '../user/user.service';
-import { CreateTaskDto } from './dto/create-task/create-task.interface';
+import { CreateTaskDto } from './dto/create-task/create-task';
 import { Task } from './entity/task';
 import { TaskService } from './task.service';
+import { UpdateTaskDto } from './dto/update-task/update-task';
 
 describe('TaskService', () => {
   let taskService: TaskService;
@@ -90,5 +91,89 @@ describe('TaskService', () => {
     await expect(taskService.createTask(createTaskDto)).rejects.toThrow(
       UserNotFound,
     );
+  });
+
+  it('should get all tasks of a user', async () => {
+    const userId = '1';
+    prisma.task.findMany.mockResolvedValueOnce([]);
+    await taskService.getAllTasksByUserId(userId);
+    expect(prisma.task.findMany).toHaveBeenCalledWith({
+      where: {
+        userId: BigInt(userId),
+      },
+    });
+  });
+
+  it('should update a task partially by id', async () => {
+    const taskId = '1';
+    const updateTaskDto: UpdateTaskDto = {
+      title: 'Task 1',
+      completed: true,
+      description: 'Description',
+    };
+    const expectedTask: Task = new Task({
+      id: BigInt(taskId),
+      title: updateTaskDto.title,
+      userId: BigInt(1),
+      description: null,
+      completed: false,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    });
+    prisma.task.update.mockResolvedValueOnce(expectedTask);
+    const updatedTask = await taskService.updateTaskById(taskId, updateTaskDto);
+    expect(prisma.task.update).toHaveBeenCalledWith({
+      where: {
+        id: BigInt(taskId),
+      },
+      data: {
+        ...updateTaskDto,
+      },
+    });
+    expect(updatedTask).toEqual(expectedTask);
+  });
+
+  it('should delete a task by id', async () => {
+    const taskId = '1';
+    prisma.task.delete.mockResolvedValueOnce({
+      id: BigInt(taskId),
+      title: 'Task 1',
+      userId: BigInt(1),
+      description: null,
+      completed: false,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    });
+    await taskService.deleteTaskById(taskId);
+    expect(prisma.task.delete).toHaveBeenCalledWith({
+      where: {
+        id: BigInt(taskId),
+      },
+    });
+  });
+
+  it('should toggle the completion status of a task', async () => {
+    const taskId = '1';
+    const task: Task = new Task({
+      id: BigInt(taskId),
+      title: 'Task 1',
+      userId: BigInt(1),
+      description: null,
+      completed: false,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    });
+    prisma.task.findUnique.mockResolvedValueOnce(task);
+    prisma.task.update.mockResolvedValueOnce(task);
+    const updatedTask = await taskService.toggleTaskCompletion(taskId);
+    expect(prisma.task.update).toHaveBeenCalledWith({
+      where: {
+        id: BigInt(taskId),
+      },
+      data: {
+        completed: !task.completed,
+      },
+    });
+    expect(updatedTask).toEqual(task);
   });
 });

@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { DeepMockProxy, mockDeep } from 'jest-mock-extended';
 import { UserNotFound } from 'src/user/exceptions/user-not-found/user-not-found';
 import { Task } from './entity/task';
-import { CreateTaskDto } from './dto/create-task/create-task.interface';
+import { CreateTaskDto } from './dto/create-task/create-task';
 import { TaskController } from './task.controller';
 import { TaskService } from './task.service';
 

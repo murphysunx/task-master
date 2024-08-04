@@ -18,12 +18,22 @@ model task {
   userId      BigInt
 }
 
-model user {
+model taskList {
   id        BigInt   @id @default(autoincrement())
-  name      String   @unique @db.VarChar(255)
-  email     String   @unique
-  password  String
+  name      String   @db.VarChar(255)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  userId    BigInt
+  createdBy user     @relation(fields: [userId], references: [id])
+}
+
+model user {
+  id        BigInt     @id @default(autoincrement())
+  name      String     @unique @db.VarChar(255)
+  email     String     @unique
+  password  String
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
   task      task[]
+  taskList  taskList[]
 }

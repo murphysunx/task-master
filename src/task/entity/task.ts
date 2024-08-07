@@ -3,7 +3,7 @@ import { task } from '@prisma/client';
 
 export class Task implements task {
   @ApiProperty()
-  id: bigint;
+  id: number;
 
   @ApiProperty()
   completed: boolean;
@@ -21,9 +21,9 @@ export class Task implements task {
   updatedAt: Date;
 
   @ApiProperty()
-  userId: bigint;
+  userId: number;
 
-  constructor(data: Partial<Task>) {
+  constructor(data: Partial<task>) {
     Object.assign(this, data);
   }
 }

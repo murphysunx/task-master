@@ -4,6 +4,7 @@ import {
   Delete,
   Get,
   Param,
+  ParseIntPipe,
   Patch,
   Post,
   Query,
@@ -18,23 +19,25 @@ export class TaskController {
   constructor(private readonly taskService: TaskService) {}
 
   @Post()
-  async create(createTaskDto: CreateTaskDto): Promise<Task> {
+  async create(@Body() createTaskDto: CreateTaskDto): Promise<Task> {
     return this.taskService.createTask(createTaskDto);
   }
 
   @Delete(':taskId')
-  async delete(@Param('taskId') taskId: string): Promise<Task> {
+  async delete(@Param('taskId', ParseIntPipe) taskId: number): Promise<Task> {
     return this.taskService.deleteTaskById(taskId);
   }
 
   @Get()
-  async getByUserId(@Query('userId') userId: string): Promise<Task[]> {
+  async getByUserId(
+    @Query('userId', ParseIntPipe) userId: number,
+  ): Promise<Task[]> {
     return this.taskService.getAllTasksByUserId(userId);
   }
 
   @Patch(':taskId')
   async update(
-    @Param('taskId') taskId: string,
+    @Param('taskId', ParseIntPipe) taskId: number,
     @Body() updateTaskDto: UpdateTaskDto,
   ): Promise<Task> {
     return this.taskService.updateTaskById(taskId, updateTaskDto);

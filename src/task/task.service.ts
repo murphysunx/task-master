@@ -13,6 +13,7 @@ export class TaskService {
   ) {}
 
   async createTask(createTaskDto: CreateTaskDto): Promise<Task> {
+    console.log('create task dto', createTaskDto);
     const { title, userId, description } = createTaskDto;
     // check if the user exists
     const user = await this.userService.findById(userId);
@@ -22,7 +23,7 @@ export class TaskService {
     const result = await this.prismaService.task.create({
       data: {
         title,
-        userId: BigInt(userId),
+        userId: userId,
         description,
         completed: false,
       },
@@ -32,41 +33,41 @@ export class TaskService {
     return task;
   }
 
-  async getAllTasksByUserId(userId: string): Promise<Task[]> {
+  async getAllTasksByUserId(userId: number): Promise<Task[]> {
     const tasks = await this.prismaService.task.findMany({
       where: {
-        userId: BigInt(userId),
+        userId,
       },
     });
     return tasks.map((task) => new Task(task));
   }
 
   async updateTaskById(
-    taskId: string,
+    taskId: number,
     updateTaskDto: Partial<Task>,
   ): Promise<Task> {
     const updatedTask = await this.prismaService.task.update({
       where: {
-        id: BigInt(taskId),
+        id: taskId,
       },
       data: { ...updateTaskDto },
     });
     return new Task(updatedTask);
   }
 
-  async deleteTaskById(taskId: string): Promise<Task> {
+  async deleteTaskById(taskId: number): Promise<Task> {
     const deletedTask = await this.prismaService.task.delete({
       where: {
-        id: BigInt(taskId),
+        id: taskId,
       },
     });
     return new Task(deletedTask);
   }
 
-  async toggleTaskCompletion(taskId: string): Promise<Task> {
+  async toggleTaskCompletion(taskId: number): Promise<Task> {
     const task = await this.prismaService.task.findUnique({
       where: {
-        id: BigInt(taskId),
+        id: taskId,
       },
     });
     if (!task) {
@@ -74,7 +75,7 @@ export class TaskService {
     }
     const updatedTask = await this.prismaService.task.update({
       where: {
-        id: BigInt(taskId),
+        id: taskId,
       },
       data: {
         completed: !task.completed,

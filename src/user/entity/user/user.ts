@@ -13,7 +13,7 @@ import {
 export class User implements user {
   @Transform(({ value }) => value.toString())
   @ApiProperty()
-  id: bigint;
+  id: number;
 
   @IsString()
   @IsNotEmpty()

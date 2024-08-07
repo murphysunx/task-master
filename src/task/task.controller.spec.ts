@@ -32,12 +32,12 @@ describe('TaskController', () => {
     const createTaskDto: CreateTaskDto = {
       title: 'Task 1',
       description: 'Description 1',
-      userId: '1',
+      userId: 1,
     };
     const expectedTask: Task = new Task({
-      id: BigInt(1),
+      id: 1,
       title: createTaskDto.title,
-      userId: BigInt(createTaskDto.userId),
+      userId: createTaskDto.userId,
       completed: false,
       description: createTaskDto.description,
       createdAt: new Date(),
@@ -53,7 +53,7 @@ describe('TaskController', () => {
     const createTaskDto: CreateTaskDto = {
       title: 'Task 1',
       description: 'Description 1',
-      userId: '1',
+      userId: 1,
     };
     taskService.createTask.mockRejectedValue(
       new UserNotFound(createTaskDto.userId),
@@ -64,11 +64,11 @@ describe('TaskController', () => {
   });
 
   it('should delete task by taskId', async () => {
-    const taskId = '1';
+    const taskId = 1;
     const expectedTask: Task = new Task({
-      id: BigInt(1),
+      id: 1,
       title: 'Task 1',
-      userId: BigInt(1),
+      userId: 1,
       completed: false,
       description: 'Description 1',
       createdAt: new Date(),
@@ -81,12 +81,12 @@ describe('TaskController', () => {
   });
 
   it('should get all tasks by userId', async () => {
-    const userId = '1';
+    const userId = 1;
     const expectedTasks: Task[] = [
       new Task({
-        id: BigInt(1),
+        id: 1,
         title: 'Task 1',
-        userId: BigInt(1),
+        userId: 1,
         completed: false,
         description: 'Description 1',
         createdAt: new Date(),
@@ -100,16 +100,16 @@ describe('TaskController', () => {
   });
 
   it('should update task by taskId', async () => {
-    const taskId = '1';
+    const taskId = 1;
     const updateTaskDto = {
       title: 'Task 1',
       description: 'Description 1',
       completed: true,
     };
     const expectedTask: Task = new Task({
-      id: BigInt(1),
+      id: 1,
       title: updateTaskDto.title,
-      userId: BigInt(1),
+      userId: 1,
       completed: updateTaskDto.completed,
       description: updateTaskDto.description,
       createdAt: new Date(),

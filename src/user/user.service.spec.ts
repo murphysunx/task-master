@@ -34,7 +34,7 @@ describe('UserService', () => {
       password: 'password',
     };
     const createdUser: Awaited<ReturnType<typeof prisma.user.create>> = {
-      id: BigInt(1),
+      id: 1,
       ...payload,
       createdAt: new Date('2021-01-01'),
       updatedAt: new Date('2021-01-01'),
@@ -55,7 +55,7 @@ describe('UserService', () => {
   });
 
   it('should get a user by id', async () => {
-    const id = BigInt(1);
+    const id = 1;
     const expectedUser: Awaited<ReturnType<typeof prisma.user.findUnique>> = {
       id,
       name: 'John Doe',
@@ -68,7 +68,7 @@ describe('UserService', () => {
       return expectedUser;
     }) as any;
     prisma.user.findUnique.mockImplementationOnce(mockImpl);
-    const foundUser = await service.findById(id.toString());
+    const foundUser = await service.findById(id);
     expect(prisma.user.findUnique).toHaveBeenCalledWith({ where: { id } });
     expect(foundUser).toBeDefined();
     expect(foundUser!.id.toString()).toBe(expectedUser.id.toString());
@@ -80,12 +80,12 @@ describe('UserService', () => {
   });
 
   it('should return null if user is not found', async () => {
-    const id = BigInt(1);
+    const id = 1;
     const mockImpl: typeof prisma.user.findUnique = (async () => {
       return null;
     }) as any;
     prisma.user.findUnique.mockImplementationOnce(mockImpl);
-    const foundUser = await service.findById(id.toString());
+    const foundUser = await service.findById(id);
     expect(prisma.user.findUnique).toHaveBeenCalledWith({ where: { id } });
     expect(foundUser).toBeNull();
   });

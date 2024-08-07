@@ -13,7 +13,6 @@ export class TaskService {
   ) {}
 
   async createTask(createTaskDto: CreateTaskDto): Promise<Task> {
-    console.log('create task dto', createTaskDto);
     const { title, userId, description } = createTaskDto;
     // check if the user exists
     const user = await this.userService.findById(userId);

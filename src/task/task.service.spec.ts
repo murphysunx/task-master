@@ -40,11 +40,11 @@ describe('TaskService', () => {
   it('should create a task with a title and a userId', async () => {
     const createTaskDto: CreateTaskDto = {
       title: 'Task 1',
-      userId: '1',
+      userId: 1,
     };
     // mock the userService.findById method
     const expectedUser: User = new User({
-      id: BigInt(1),
+      id: 1,
       name: 'John Doe',
       createdAt: new Date(),
       updatedAt: new Date(),
@@ -52,9 +52,9 @@ describe('TaskService', () => {
     userService.findById.mockReturnValueOnce(Promise.resolve(expectedUser));
     // mock created task
     const expectedTask: Awaited<ReturnType<typeof prisma.task.create>> = {
-      id: BigInt(1),
+      id: 1,
       title: createTaskDto.title,
-      userId: BigInt(expectedUser.id),
+      userId: expectedUser.id,
       createdAt: new Date(),
       updatedAt: new Date(),
       completed: false,
@@ -68,7 +68,7 @@ describe('TaskService', () => {
     expect(prisma.task.create).toHaveBeenCalledWith({
       data: {
         title: createTaskDto.title,
-        userId: BigInt(expectedUser.id),
+        userId: expectedUser.id,
         completed: false,
         description: void 0,
       } as Parameters<typeof prisma.task.create>[0]['data'],
@@ -85,7 +85,7 @@ describe('TaskService', () => {
   it('should throw UserNotFoundException if the user does not exist', async () => {
     const createTaskDto: CreateTaskDto = {
       title: 'Task 1',
-      userId: '1',
+      userId: 1,
     };
     userService.findById.mockReturnValueOnce(Promise.resolve(null));
     await expect(taskService.createTask(createTaskDto)).rejects.toThrow(
@@ -94,27 +94,27 @@ describe('TaskService', () => {
   });
 
   it('should get all tasks of a user', async () => {
-    const userId = '1';
+    const userId = 1;
     prisma.task.findMany.mockResolvedValueOnce([]);
     await taskService.getAllTasksByUserId(userId);
     expect(prisma.task.findMany).toHaveBeenCalledWith({
       where: {
-        userId: BigInt(userId),
+        userId: userId,
       },
     });
   });
 
   it('should update a task partially by id', async () => {
-    const taskId = '1';
+    const taskId = 1;
     const updateTaskDto: UpdateTaskDto = {
       title: 'Task 1',
       completed: true,
       description: 'Description',
     };
     const expectedTask: Task = new Task({
-      id: BigInt(taskId),
+      id: taskId,
       title: updateTaskDto.title,
-      userId: BigInt(1),
+      userId: 1,
       description: null,
       completed: false,
       createdAt: new Date(),
@@ -124,7 +124,7 @@ describe('TaskService', () => {
     const updatedTask = await taskService.updateTaskById(taskId, updateTaskDto);
     expect(prisma.task.update).toHaveBeenCalledWith({
       where: {
-        id: BigInt(taskId),
+        id: taskId,
       },
       data: {
         ...updateTaskDto,
@@ -134,11 +134,11 @@ describe('TaskService', () => {
   });
 
   it('should delete a task by id', async () => {
-    const taskId = '1';
+    const taskId = 1;
     prisma.task.delete.mockResolvedValueOnce({
-      id: BigInt(taskId),
+      id: taskId,
       title: 'Task 1',
-      userId: BigInt(1),
+      userId: 1,
       description: null,
       completed: false,
       createdAt: new Date(),
@@ -147,17 +147,17 @@ describe('TaskService', () => {
     await taskService.deleteTaskById(taskId);
     expect(prisma.task.delete).toHaveBeenCalledWith({
       where: {
-        id: BigInt(taskId),
+        id: taskId,
       },
     });
   });
 
   it('should toggle the completion status of a task', async () => {
-    const taskId = '1';
+    const taskId = 1;
     const task: Task = new Task({
-      id: BigInt(taskId),
+      id: taskId,
       title: 'Task 1',
-      userId: BigInt(1),
+      userId: 1,
       description: null,
       completed: false,
       createdAt: new Date(),
@@ -168,7 +168,7 @@ describe('TaskService', () => {
     const updatedTask = await taskService.toggleTaskCompletion(taskId);
     expect(prisma.task.update).toHaveBeenCalledWith({
       where: {
-        id: BigInt(taskId),
+        id: taskId,
       },
       data: {
         completed: !task.completed,

@@ -30,7 +30,10 @@ async function bootstrap() {
       P2025: HttpStatus.NOT_FOUND,
     }),
   );
+  // app.enableCors({
+  //   origin: ['http://localhost:3000'],
+  // });
 
-  await app.listen(3000);
+  await app.listen(3001);
 }
 bootstrap();

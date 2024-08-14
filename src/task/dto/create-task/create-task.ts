@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsInt, IsNotEmpty, IsString } from 'class-validator';
+import { IsInt, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 export class CreateTaskDto {
   @IsString()
@@ -8,6 +8,7 @@ export class CreateTaskDto {
   readonly title: string;
 
   @IsString()
+  @IsOptional()
   @ApiProperty({ required: false, nullable: true })
   readonly description?: string;
 

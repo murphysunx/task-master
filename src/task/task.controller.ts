@@ -9,9 +9,11 @@ import {
   Post,
   Query,
 } from '@nestjs/common';
+import { CreateTaskListDto } from './dto/create-task-list/create-task-list';
 import { CreateTaskDto } from './dto/create-task/create-task';
 import { UpdateTaskDto } from './dto/update-task/update-task';
 import { Task } from './entity/task';
+import { TaskList } from './entity/task-list';
 import { TaskService } from './task.service';
 
 @Controller('tasks')
@@ -41,5 +43,12 @@ export class TaskController {
     @Body() updateTaskDto: UpdateTaskDto,
   ): Promise<Task> {
     return this.taskService.updateTaskById(taskId, updateTaskDto);
+  }
+
+  @Post('lists')
+  async createTaskList(
+    @Body() createTaskListDto: CreateTaskListDto,
+  ): Promise<TaskList> {
+    return this.taskService.createTaskList(createTaskListDto);
   }
 }

@@ -2,8 +2,10 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'nestjs-prisma';
 import { UserNotFound } from '../user/exceptions/user-not-found/user-not-found';
 import { UserService } from '../user/user.service';
+import { CreateTaskListDto } from './dto/create-task-list/create-task-list';
 import { CreateTaskDto } from './dto/create-task/create-task';
 import { Task } from './entity/task';
+import { TaskList } from './entity/task-list';
 
 @Injectable()
 export class TaskService {
@@ -81,5 +83,15 @@ export class TaskService {
       },
     });
     return new Task(updatedTask);
+  }
+
+  async createTaskList(dto: CreateTaskListDto): Promise<TaskList> {
+    const list = await this.prismaService.taskList.create({
+      data: {
+        name: dto.name,
+        userId: dto.ownerId,
+      },
+    });
+    return new TaskList(list);
   }
 }

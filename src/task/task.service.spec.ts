@@ -37,10 +37,11 @@ describe('TaskService', () => {
     expect(taskService).toBeDefined();
   });
 
-  it('should create a task with a title and a userId', async () => {
+  it('should create a task with title, userId and listId', async () => {
     const createTaskDto: CreateTaskDto = {
       title: 'Task 1',
       userId: 1,
+      listId: 1,
     };
     // mock the userService.findById method
     const expectedUser: User = new User({
@@ -59,6 +60,7 @@ describe('TaskService', () => {
       updatedAt: new Date(),
       completed: false,
       description: null,
+      listId: 1,
     };
     prisma.task.create.mockResolvedValueOnce(expectedTask);
     const createdTask: Task = await taskService.createTask(createTaskDto);
@@ -80,6 +82,7 @@ describe('TaskService', () => {
     expect(createdTask.completed).toBe(expectedTask.completed);
     expect(createdTask.createdAt).toEqual(expectedTask.createdAt);
     expect(createdTask.updatedAt).toEqual(expectedTask.updatedAt);
+    expect(createdTask.listId).toEqual(expectedTask.listId);
   });
 
   it('should throw UserNotFoundException if the user does not exist', async () => {
@@ -92,6 +95,8 @@ describe('TaskService', () => {
       UserNotFound,
     );
   });
+
+  // it("Should throw TaskListNotFoundException if the task list does not exist", () )
 
   it('should get all tasks of a user', async () => {
     const userId = 1;
@@ -143,6 +148,7 @@ describe('TaskService', () => {
       completed: false,
       createdAt: new Date(),
       updatedAt: new Date(),
+      listId: null,
     });
     await taskService.deleteTaskById(taskId);
     expect(prisma.task.delete).toHaveBeenCalledWith({

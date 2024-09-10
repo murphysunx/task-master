@@ -9,14 +9,16 @@ datasource db {
 }
 
 model task {
-  id          Int      @id @default(autoincrement())
-  completed   Boolean  @default(false)
-  title       String   @db.VarChar(255)
+  id          Int       @id @default(autoincrement())
+  completed   Boolean   @default(false)
+  title       String    @db.VarChar(255)
   description String?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  createdBy   user     @relation(fields: [userId], references: [id])
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  createdBy   user      @relation(fields: [userId], references: [id])
   userId      Int
+  belongTo    taskList? @relation(fields: [listId], references: [id])
+  listId      Int?
 }
 
 model taskList {
@@ -26,6 +28,7 @@ model taskList {
   updatedAt DateTime @updatedAt
   userId    Int
   createdBy user     @relation(fields: [userId], references: [id])
+  task      task[]
 }
 
 model user {

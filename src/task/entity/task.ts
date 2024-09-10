@@ -23,6 +23,9 @@ export class Task implements task {
   @ApiProperty()
   userId: number;
 
+  @ApiProperty()
+  listId: number;
+
   constructor(data: Partial<task>) {
     Object.assign(this, data);
   }

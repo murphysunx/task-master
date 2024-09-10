@@ -16,4 +16,8 @@ export class CreateTaskDto {
   @IsNotEmpty()
   @ApiProperty()
   readonly userId: number;
+
+  @IsInt()
+  @ApiProperty({ required: false, nullable: true })
+  readonly listId?: number;
 }

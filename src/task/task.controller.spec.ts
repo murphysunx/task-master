@@ -94,9 +94,11 @@ describe('TaskController', () => {
       }),
     ];
     taskService.getAllTasksByUserId.mockResolvedValue(expectedTasks);
-    const tasks = await controller.getByUserId(userId);
+    taskService.getAllTaskListsByUserId.mockResolvedValueOnce([]);
+    const result = await controller.getByUserId(userId);
     expect(taskService.getAllTasksByUserId).toHaveBeenCalledWith(userId);
-    expect(tasks).toEqual(expectedTasks);
+    expect(taskService.getAllTaskListsByUserId).toHaveBeenCalledWith(userId);
+    expect(result).toEqual({ lists: [], tasks: expectedTasks });
   });
 
   it('should update task by taskId', async () => {

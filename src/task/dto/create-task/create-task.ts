@@ -18,6 +18,7 @@ export class CreateTaskDto {
   readonly userId: number;
 
   @IsInt()
+  @IsOptional()
   @ApiProperty({ required: false, nullable: true })
   readonly listId?: number;
 }

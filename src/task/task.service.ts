@@ -94,4 +94,13 @@ export class TaskService {
     });
     return new TaskList(list);
   }
+
+  async getAllTaskListsByUserId(userId: number): Promise<TaskList[]> {
+    const lists = await this.prismaService.taskList.findMany({
+      where: {
+        userId,
+      },
+    });
+    return lists.map((list) => new TaskList(list));
+  }
 }

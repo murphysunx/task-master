@@ -33,8 +33,10 @@ export class TaskController {
   @Get()
   async getByUserId(
     @Query('userId', ParseIntPipe) userId: number,
-  ): Promise<Task[]> {
-    return this.taskService.getAllTasksByUserId(userId);
+  ): Promise<{ tasks: Task[]; lists: TaskList[] }> {
+    const tasks = await this.taskService.getAllTasksByUserId(userId);
+    const lists = await this.taskService.getAllTaskListsByUserId(userId);
+    return { tasks, lists };
   }
 
   @Patch(':taskId')

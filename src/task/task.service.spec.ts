@@ -1,14 +1,16 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient, taskList } from '@prisma/client';
 import { DeepMockProxy, mockDeep } from 'jest-mock-extended';
 import { PrismaService } from 'nestjs-prisma';
 import { User } from '../user/entity/user/user';
 import { UserNotFound } from '../user/exceptions/user-not-found/user-not-found';
 import { UserService } from '../user/user.service';
+import { CreateTaskListDto } from './dto/create-task-list/create-task-list';
 import { CreateTaskDto } from './dto/create-task/create-task';
-import { Task } from './entity/task';
-import { TaskService } from './task.service';
 import { UpdateTaskDto } from './dto/update-task/update-task';
+import { Task } from './entity/task';
+import { TaskList } from './entity/task-list';
+import { TaskService } from './task.service';
 
 describe('TaskService', () => {
   let taskService: TaskService;
@@ -181,5 +183,43 @@ describe('TaskService', () => {
       },
     });
     expect(updatedTask).toEqual(task);
+  });
+
+  it('Should create task list', async () => {
+    const dto: CreateTaskListDto = {
+      name: 'Chore',
+      ownerId: 1,
+    };
+    prisma.taskList.create.mockResolvedValueOnce({
+      id: 1,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      name: dto.name,
+      userId: dto.ownerId,
+    } satisfies taskList);
+    const taskList = await taskService.createTaskList(dto);
+    expect(prisma.taskList.create).toHaveBeenCalledTimes(1);
+    expect(prisma.taskList.create).toHaveBeenCalledWith({
+      data: {
+        name: dto.name,
+        userId: dto.ownerId,
+      },
+    });
+    expect(taskList instanceof TaskList).toBeTruthy();
+    expect(taskList.name).toBe(dto.name);
+    expect(taskList.userId).toBe(dto.ownerId);
+  });
+
+  it('Should getAllTaskListsByUserId', async () => {
+    const userId = 1;
+    prisma.taskList.findMany.mockResolvedValueOnce([]);
+    const taskLists = await taskService.getAllTaskListsByUserId(userId);
+    expect(prisma.taskList.findMany).toHaveBeenCalledTimes(1);
+    expect(prisma.taskList.findMany).toHaveBeenCalledWith({
+      where: {
+        userId,
+      },
+    });
+    expect(taskLists).toHaveLength(0);
   });
 });

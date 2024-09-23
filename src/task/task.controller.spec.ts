@@ -1,8 +1,10 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { DeepMockProxy, mockDeep } from 'jest-mock-extended';
 import { UserNotFound } from 'src/user/exceptions/user-not-found/user-not-found';
+import { CreateTaskListDto } from './dto/create-task-list/create-task-list';
 import { CreateTaskDto } from './dto/create-task/create-task';
 import { Task } from './entity/task';
+import { TaskList } from './entity/task-list';
 import { TaskController } from './task.controller';
 import { TaskService } from './task.service';
 
@@ -124,5 +126,44 @@ describe('TaskController', () => {
       updateTaskDto,
     );
     expect(task).toEqual(expectedTask);
+  });
+
+  it('should create task list', async () => {
+    const createTaskListDto = {
+      name: 'Task List 1',
+      ownerId: 1,
+    } satisfies CreateTaskListDto;
+    const expectedTaskList = {
+      id: 1,
+      name: createTaskListDto.name,
+      userId: createTaskListDto.ownerId,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    } satisfies TaskList;
+    taskService.createTaskList.mockResolvedValue(expectedTaskList);
+    const taskList = await controller.createTaskList(createTaskListDto);
+    expect(taskService.createTaskList).toHaveBeenCalledWith(createTaskListDto);
+    expect(taskList).toEqual(expectedTaskList);
+  });
+
+  it('Should update task list by listId', async () => {
+    const listId = 1;
+    const updateTaskListDto = {
+      name: 'Task List 1',
+    };
+    const expectedTaskList = {
+      id: listId,
+      name: updateTaskListDto.name,
+      userId: 1,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    } satisfies TaskList;
+    taskService.updateTaskListById.mockResolvedValue(expectedTaskList);
+    const taskList = await controller.updateTaskList(listId, updateTaskListDto);
+    expect(taskService.updateTaskListById).toHaveBeenCalledWith(
+      listId,
+      updateTaskListDto,
+    );
+    expect(taskList).toEqual(expectedTaskList);
   });
 });

@@ -4,6 +4,7 @@ import { UserNotFound } from '../user/exceptions/user-not-found/user-not-found';
 import { UserService } from '../user/user.service';
 import { CreateTaskListDto } from './dto/create-task-list/create-task-list';
 import { CreateTaskDto } from './dto/create-task/create-task';
+import { UpdateTaskListDto } from './dto/update-task-list/update-task-list';
 import { Task } from './entity/task';
 import { TaskList } from './entity/task-list';
 
@@ -15,7 +16,7 @@ export class TaskService {
   ) {}
 
   async createTask(createTaskDto: CreateTaskDto): Promise<Task> {
-    const { title, userId, description } = createTaskDto;
+    const { title, userId, description, listId } = createTaskDto;
     // check if the user exists
     const user = await this.userService.findById(userId);
     if (!user) {
@@ -27,6 +28,7 @@ export class TaskService {
         userId: userId,
         description,
         completed: false,
+        listId,
       },
     });
     // construct the Task object
@@ -102,5 +104,20 @@ export class TaskService {
       },
     });
     return lists.map((list) => new TaskList(list));
+  }
+
+  async updateTaskListById(
+    taskListId: number,
+    dto: UpdateTaskListDto,
+  ): Promise<TaskList> {
+    const updatedList = await this.prismaService.taskList.update({
+      where: {
+        id: taskListId,
+      },
+      data: {
+        name: dto.name,
+      },
+    });
+    return new TaskList(updatedList);
   }
 }

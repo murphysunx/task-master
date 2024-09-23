@@ -75,6 +75,7 @@ describe('TaskService', () => {
         userId: expectedUser.id,
         completed: false,
         description: void 0,
+        listId: 1,
       } as Parameters<typeof prisma.task.create>[0]['data'],
     });
     expect(createdTask.id.toString()).toBe(expectedTask.id.toString());
@@ -221,5 +222,31 @@ describe('TaskService', () => {
       },
     });
     expect(taskLists).toHaveLength(0);
+  });
+
+  it('Should update a task list', async () => {
+    const taskListId = 1;
+    const name = 'Chore';
+    prisma.taskList.update.mockResolvedValueOnce({
+      id: taskListId,
+      name,
+      userId: 1,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    } satisfies taskList);
+    const updatedTaskList = await taskService.updateTaskListById(taskListId, {
+      name,
+    });
+    expect(prisma.taskList.update).toHaveBeenCalledTimes(1);
+    expect(prisma.taskList.update).toHaveBeenCalledWith({
+      where: {
+        id: taskListId,
+      },
+      data: {
+        name,
+      },
+    });
+    expect(updatedTaskList instanceof TaskList).toBeTruthy();
+    expect(updatedTaskList.name).toBe(name);
   });
 });

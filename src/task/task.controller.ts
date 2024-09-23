@@ -11,6 +11,7 @@ import {
 } from '@nestjs/common';
 import { CreateTaskListDto } from './dto/create-task-list/create-task-list';
 import { CreateTaskDto } from './dto/create-task/create-task';
+import { UpdateTaskListDto } from './dto/update-task-list/update-task-list';
 import { UpdateTaskDto } from './dto/update-task/update-task';
 import { Task } from './entity/task';
 import { TaskList } from './entity/task-list';
@@ -52,5 +53,13 @@ export class TaskController {
     @Body() createTaskListDto: CreateTaskListDto,
   ): Promise<TaskList> {
     return this.taskService.createTaskList(createTaskListDto);
+  }
+
+  @Patch('lists/:listId')
+  async updateTaskList(
+    @Param('listId', ParseIntPipe) listId: number,
+    @Body() updateTaskListDto: UpdateTaskListDto,
+  ): Promise<TaskList> {
+    return this.taskService.updateTaskListById(listId, updateTaskListDto);
   }
 }

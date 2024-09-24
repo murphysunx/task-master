@@ -120,4 +120,13 @@ export class TaskService {
     });
     return new TaskList(updatedList);
   }
+
+  async deleteTaskListById(taskListId: number): Promise<TaskList> {
+    const deletedList = await this.prismaService.taskList.delete({
+      where: {
+        id: taskListId,
+      },
+    });
+    return new TaskList(deletedList);
+  }
 }

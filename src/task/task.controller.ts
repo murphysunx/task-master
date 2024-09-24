@@ -62,4 +62,11 @@ export class TaskController {
   ): Promise<TaskList> {
     return this.taskService.updateTaskListById(listId, updateTaskListDto);
   }
+
+  @Delete('lists/:listId')
+  async deleteTaskList(
+    @Param('listId', ParseIntPipe) listId: number,
+  ): Promise<TaskList> {
+    return this.taskService.deleteTaskListById(listId);
+  }
 }

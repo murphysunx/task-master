@@ -249,4 +249,24 @@ describe('TaskService', () => {
     expect(updatedTaskList instanceof TaskList).toBeTruthy();
     expect(updatedTaskList.name).toBe(name);
   });
+
+  it('Should delete a task list', async () => {
+    const taskListId = 1;
+    prisma.taskList.delete.mockResolvedValueOnce({
+      id: taskListId,
+      name: 'Chore',
+      userId: 1,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    } satisfies taskList);
+    const deletedTaskList = await taskService.deleteTaskListById(taskListId);
+    expect(prisma.taskList.delete).toHaveBeenCalledTimes(1);
+    expect(prisma.taskList.delete).toHaveBeenCalledWith({
+      where: {
+        id: taskListId,
+      },
+    });
+    expect(deletedTaskList instanceof TaskList).toBeTruthy();
+    expect(deletedTaskList.id).toBe(taskListId);
+  });
 });

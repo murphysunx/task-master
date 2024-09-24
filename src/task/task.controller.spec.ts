@@ -166,4 +166,19 @@ describe('TaskController', () => {
     );
     expect(taskList).toEqual(expectedTaskList);
   });
+
+  it('Should delete task list by listId', async () => {
+    const listId = 1;
+    const expectedTaskList = {
+      id: listId,
+      name: 'Task List 1',
+      userId: 1,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    } satisfies TaskList;
+    taskService.deleteTaskListById.mockResolvedValue(expectedTaskList);
+    const taskList = await controller.deleteTaskList(listId);
+    expect(taskService.deleteTaskListById).toHaveBeenCalledWith(listId);
+    expect(taskList).toEqual(expectedTaskList);
+  });
 });
